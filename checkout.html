@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CellMart — Checkout</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="app"></div>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    const steps = ["Información personal","Verificación de identidad","Dirección de envío","Dirección de facturación","Dirección alternativa de emergencia","Información de pago","Verificación de pago","Términos y condiciones","Encuesta de satisfacción previa","Preferencias astrológicas","Personalización del empaque","Confirmación final"];
+    let currentStep = 0, loading = false, silentWait = false;
+
+    function render() {
+      document.getElementById('app').innerHTML = renderBanner() + renderHiddenNav() + renderModal() +
+      `<div class="topbar"><div class="topbar-inner"><h1 class="playfair" style="font-size:24px;font-weight:700">CellMart</h1></div></div>
+      <div class="container" style="max-width:768px">
+        <h2 style="font-size:20px;font-weight:700;margin-bottom:4px">Proceso de compra</h2>
+        <p style="font-size:14px;color:var(--muted-foreground);margin-bottom:24px">Paso ${currentStep+1} de 12 — ${steps[currentStep]}</p>
+        <div class="progress-bar">${steps.map((_,i)=>`<div class="${i<=currentStep?'active':''}"></div>`).join('')}</div>
+        <div class="grid-layout" style="grid-template-columns:1fr 3fr">
+          <div class="steps-sidebar">${steps.map((s,i)=>`<div class="step-item ${i===currentStep?'current':i<currentStep?'done':'pending'}">${i<currentStep?'✓':(i+1)} <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s}</span></div>`).join('')}</div>
+          <div class="checkout-form" id="formArea"></div>
+        </div>
+      </div>`;
+      renderForm();
+    }
+
+    function renderForm() {
+      const area = document.getElementById('formArea');
+      if (loading) {
+        area.innerHTML = '<div class="loading-box"><div class="spinner"></div><p>Procesando información...</p></div>';
+        return;
+      }
+      let extra = '';
+      if (currentStep === 9) {
+        extra = `<label>Seleccione su signo</label><select><option>Aries — Descuento: 0%</option><option>Tauro — Recargo: 5%</option><option>Géminis — Precio dinámico</option><option>Cáncer — Envío aleatorio</option></select>`;
+      }
+      area.innerHTML = `<label>${steps[currentStep]}</label><input placeholder="Complete este campo">${extra}<button onclick="nextStep()" ${silentWait?'disabled':''}>${currentStep<11?(silentWait?'Procesando...':'Continuar'):(silentWait?'Procesando...':'Confirmar compra')}</button>`;
+    }
+
+    function nextStep() {
+      if (currentStep < 11) {
+        loading = true; renderForm();
+        setTimeout(() => {
+          loading = false;
+          if (Math.random() > 0.6) { openModal(); renderForm(); }
+          else { currentStep++; render(); }
+        }, 3000);
+      } else {
+        silentWait = true; renderForm();
+        setTimeout(() => { silentWait = false; openModal(); renderForm(); }, 5000);
+      }
+    }
+
+    render();
+  </script>
+</body>
+</html>

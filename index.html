@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CellMart — Smartphones al mejor precio</title>
+  <meta name="description" content="Tienda online de smartphones con los mejores precios y ofertas.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="app"></div>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    let filteredPhones = [...phones];
+
+    function render() {
+      const app = document.getElementById('app');
+      app.innerHTML = renderBanner() + renderHiddenNav() +
+      `<div class="topbar">
+        <div class="topbar-inner">
+          <h1 class="playfair" style="font-size:24px;font-weight:700">CellMart</h1>
+          <div class="topbar-info">
+            <span>🚚 Envío gratis</span>
+            <span>🛡 Garantía</span>
+            <span>💳 Pagos seguros</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero">
+        <div class="hero-inner">
+          <p class="sub">Los mejores smartphones</p>
+          <h2 class="playfair">Encuentra tu próximo dispositivo</h2>
+          <div class="search-box">
+            <input id="searchInput" placeholder="Buscar por peso exacto en onzas (ej: 6.17)">
+            <button onclick="doSearch()">Buscar</button>
+          </div>
+          <p class="search-error" id="searchError"></p>
+        </div>
+      </div>
+      <div class="marquee-bar"><span class="marquee-text">🔥 Oferta limitada: Hasta 40% de descuento · Envío express en 24h · Financiamiento sin intereses · Garantía extendida incluida</span></div>
+      <div class="container">
+        <div class="grid-layout">
+          <div>
+            <div class="filters">
+              <h3>Filtros</h3>
+              <label>Fase lunar de ensamblaje</label>
+              <select id="fLunar"><option value="">Todas las fases</option>${lunarPhases.map(p=>`<option>${p}</option>`).join('')}</select>
+              <label>Signo zodiacal del CEO</label>
+              <select id="fZodiac"><option value="">Todos los signos</option>${zodiacSigns.map(z=>`<option>${z}</option>`).join('')}</select>
+              <label>¿Resistente al agua?</label>
+              <select id="fFloats"><option value="">Todos</option><option value="yes">Sí, flota</option><option value="no">No, se hunde</option></select>
+              <button onclick="applyFilters()">Aplicar filtros</button>
+            </div>
+          </div>
+          <div>
+            <div class="product-grid" id="productGrid"></div>
+            <div class="no-results" id="noResults" style="display:none"><p>No se encontraron resultados</p><p>Intenta ajustar los filtros de búsqueda.</p></div>
+          </div>
+        </div>
+      </div>` + renderFooter();
+
+      renderProducts();
+    }
+
+    function renderProducts() {
+      const grid = document.getElementById('productGrid');
+      const noRes = document.getElementById('noResults');
+      if (filteredPhones.length === 0) { grid.style.display='none'; noRes.style.display='block'; return; }
+      grid.style.display=''; noRes.style.display='none';
+      grid.innerHTML = filteredPhones.map(p => `
+        <div class="product-card" onclick="location.href='product.html?id=${p.id}'">
+          <img src="${p.image}" alt="${p.name}">
+          <div class="info">
+            <p class="brand">${p.brand}</p>
+            <h3 class="name">${p.name}</h3>
+            <p class="specs">${p.specs}</p>
+            <div class="bottom">
+              <span>Verificar precio →</span>
+              <div class="evasive-wrap" data-id="${p.id}" onclick="event.stopPropagation()"></div>
+            </div>
+          </div>
+        </div>`).join('');
+      document.querySelectorAll('.evasive-wrap').forEach(el => {
+        const phone = phones.find(p => p.id == el.dataset.id);
+        createEvasiveButton(el, () => showToast('Producto agregado', phone.name + ' fue añadido a tu carrito.'));
+      });
+    }
+
+    function doSearch() {
+      const val = document.getElementById('searchInput').value;
+      const num = parseFloat(val);
+      const err = document.getElementById('searchError');
+      if (isNaN(num)) { err.textContent = 'El buscador solo acepta el peso exacto del dispositivo en onzas.'; filteredPhones = [...phones]; }
+      else { err.textContent = ''; filteredPhones = phones.filter(p => Math.abs(p.weightOz - num) < 0.01); }
+      renderProducts();
+    }
+
+    function applyFilters() {
+      const lunar = document.getElementById('fLunar').value;
+      const zodiac = document.getElementById('fZodiac').value;
+      const floats = document.getElementById('fFloats').value;
+      filteredPhones = phones.filter(p => {
+        if (lunar && p.lunarPhase !== lunar) return false;
+        if (zodiac && p.ceoZodiac !== zodiac) return false;
+        if (floats === 'yes' && !p.floats) return false;
+        if (floats === 'no' && p.floats) return false;
+        return true;
+      });
+      renderProducts();
+    }
+
+    render();
+  </script>
+</body>
+</html>

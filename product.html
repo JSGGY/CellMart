@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CellMart — Producto</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="app"></div>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const phone = phones.find(p => p.id == params.get('id'));
+
+    function render() {
+      if (!phone) { document.getElementById('app').innerHTML = '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;color:var(--muted-foreground);font-size:18px">Producto no encontrado.</div>'; return; }
+
+      document.title = `CellMart — ${phone.name}`;
+      const stars = '★★★★★';
+      document.getElementById('app').innerHTML = renderBanner() + renderHiddenNav() +
+      `<div class="topbar"><div class="topbar-inner"><h1 class="playfair" style="font-size:24px;font-weight:700">CellMart</h1></div></div>
+      <div class="container">
+        <a href="index.html" class="back-link">← Volver a la tienda</a>
+        <div class="product-detail">
+          <div class="img-wrap"><img src="${phone.image}" alt="${phone.name}"></div>
+          <div>
+            <p style="font-size:14px;color:var(--primary);font-weight:500">${phone.brand}</p>
+            <h1 class="playfair" style="font-size:30px;margin:4px 0 8px">${phone.name}</h1>
+            <div class="stars">${stars} <span style="font-size:12px;color:var(--muted-foreground);margin-left:4px">(247 reseñas)</span></div>
+            <p style="color:var(--muted-foreground);font-size:14px;margin:12px 0">${phone.specs}</p>
+
+            <div id="captchaArea"></div>
+
+            <div class="features-row" style="margin:20px 0">
+              <div>🚚<br>Envío gratis</div>
+              <div>🛡<br>Garantía 1 año</div>
+              <div>🔄<br>30 días devolución</div>
+            </div>
+
+            <div style="height:80px;position:relative;overflow:visible" id="evasiveArea"></div>
+
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-top:20px">
+              <h3 style="font-size:14px;font-weight:600;margin-bottom:12px">Especificaciones técnicas</h3>
+              <div class="spec-table">
+                <div class="label">Peso</div><div>${phone.weightOz} oz</div>
+                <div class="label">Fase lunar de ensamblaje</div><div>${phone.lunarPhase}</div>
+                <div class="label">Signo zodiacal del CEO</div><div>${phone.ceoZodiac}</div>
+                <div class="label">Certificación acuática</div><div>${phone.floats ? 'Flotante certificado' : 'No apto para inmersión'}</div>
+              </div>
+            </div>
+
+            <div style="margin-top:20px">
+              <h3 style="font-size:14px;font-weight:600;margin-bottom:8px">Reseñas destacadas</h3>
+              <div class="review-card">
+                <div class="stars" style="font-size:12px">★★★★★</div>
+                <p>"Excelente servicio, aunque nunca recibí el producto. El proceso de compra fue una experiencia única."</p>
+                <p style="color:var(--muted-foreground)">— María G. · Compra verificada</p>
+              </div>
+              <div class="review-card">
+                <div class="stars" style="font-size:12px">★★★★☆</div>
+                <p>"Llegó algo, pero no estoy seguro de qué es. La caja era bonita."</p>
+                <p style="color:var(--muted-foreground)">— Carlos R. · Compra verificada</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+
+      // Captcha
+      const a = Math.floor(Math.random()*50)+30, b = Math.floor(Math.random()*17)+7, c = Math.floor(Math.random()*9)+2;
+      const result = (a*b) + (c*2) - (a%7);
+      const captcha = document.getElementById('captchaArea');
+      captcha.innerHTML = `<div class="captcha-box">
+        <div class="lock">🔒 Verificación requerida para ver el precio</div>
+        <p class="question">(${a} × ${b}) + √${c*c*4} − ${a%7} = ?</p>
+        <div><input id="captchaInput" placeholder="Resultado"><button class="verify-btn" onclick="checkCaptcha(${result})">Verificar</button></div>
+        <p class="captcha-error" id="captchaErr"></p>
+      </div>`;
+
+      // Evasive
+      createEvasiveButton(document.getElementById('evasiveArea'), () => showToast('Añadido al carrito', phone.name + ' fue agregado correctamente.'));
+    }
+
+    function checkCaptcha(expected) {
+      const val = parseInt(document.getElementById('captchaInput').value);
+      if (val === expected) {
+        document.getElementById('captchaArea').innerHTML = `<p class="price-revealed">$${phone.priceHidden.toLocaleString()} <span>USD</span></p>`;
+      } else {
+        document.getElementById('captchaErr').textContent = 'Resultado incorrecto. Intente de nuevo.';
+        document.getElementById('captchaInput').value = '';
+      }
+    }
+
+    render();
+  </script>
+</body>
+</html>
