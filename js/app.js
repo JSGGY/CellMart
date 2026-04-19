@@ -50,23 +50,13 @@ document.addEventListener('click', e => {
   }
 });
 
-/* Evasive button */
+/* Evasive button (Now static) */
 function createEvasiveButton(container, onAdd, label) {
-  let evadeCount = 0;
   const btn = document.createElement('button');
-  btn.className = 'evasive-btn';
-  btn.innerHTML = '🗑 ' + (label || 'Añadir al carrito');
-  btn.style.transition = 'transform .15s';
-  btn.addEventListener('mouseenter', () => {
-    if (evadeCount < 3) {
-      const x = (Math.random() - 0.5) * 160;
-      const y = (Math.random() - 0.5) * 100;
-      btn.style.transform = `translate(${x}px, ${y}px)`;
-      evadeCount++;
-    }
-  });
+  btn.className = 'add-to-cart-btn';
+  btn.innerHTML = '🛒 ' + (label || 'Añadir al carrito');
   btn.addEventListener('click', () => {
-    if (evadeCount >= 3) { onAdd(); evadeCount = 0; btn.style.transform = 'translate(0,0)'; }
+    onAdd();
   });
   container.appendChild(btn);
 }

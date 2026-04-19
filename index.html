@@ -32,7 +32,7 @@
           <p class="sub">Los mejores smartphones</p>
           <h2 class="playfair">Encuentra tu próximo dispositivo</h2>
           <div class="search-box">
-            <input id="searchInput" placeholder="Buscar por peso exacto en onzas (ej: 6.17)">
+            <input id="searchInput" placeholder="Buscar por marca o modelo">
             <button onclick="doSearch()">Buscar</button>
           </div>
           <p class="search-error" id="searchError"></p>
@@ -44,12 +44,12 @@
           <div>
             <div class="filters">
               <h3>Filtros</h3>
-              <label>Fase lunar de ensamblaje</label>
-              <select id="fLunar"><option value="">Todas las fases</option>${lunarPhases.map(p=>`<option>${p}</option>`).join('')}</select>
-              <label>Signo zodiacal del CEO</label>
-              <select id="fZodiac"><option value="">Todos los signos</option>${zodiacSigns.map(z=>`<option>${z}</option>`).join('')}</select>
-              <label>¿Resistente al agua?</label>
-              <select id="fFloats"><option value="">Todos</option><option value="yes">Sí, flota</option><option value="no">No, se hunde</option></select>
+              <label>Marca</label>
+              <select id="fBrand"><option value="">Todas las marcas</option>${Array.from(new Set(phones.map(p=>p.brand))).map(b=>`<option>${b}</option>`).join('')}</select>
+              <label>Precio máximo ($)</label>
+              <input type="number" id="fPrice" placeholder="Cualquier precio" style="margin-bottom: 12px;">
+              <label>Almacenamiento Mínimo</label>
+              <select id="fStorage"><option value="">Todos</option><option value="256GB">256GB</option><option value="512GB">512GB</option></select>
               <button onclick="applyFilters()">Aplicar filtros</button>
             </div>
           </div>
@@ -88,23 +88,26 @@
     }
 
     function doSearch() {
-      const val = document.getElementById('searchInput').value;
-      const num = parseFloat(val);
+      const val = document.getElementById('searchInput').value.toLowerCase();
       const err = document.getElementById('searchError');
-      if (isNaN(num)) { err.textContent = 'El buscador solo acepta el peso exacto del dispositivo en onzas.'; filteredPhones = [...phones]; }
-      else { err.textContent = ''; filteredPhones = phones.filter(p => Math.abs(p.weightOz - num) < 0.01); }
+      err.textContent = '';
+      if (!val) { 
+        filteredPhones = [...phones]; 
+      } else { 
+        filteredPhones = phones.filter(p => p.name.toLowerCase().includes(val) || p.brand.toLowerCase().includes(val)); 
+      }
       renderProducts();
     }
 
     function applyFilters() {
-      const lunar = document.getElementById('fLunar').value;
-      const zodiac = document.getElementById('fZodiac').value;
-      const floats = document.getElementById('fFloats').value;
+      const brand = document.getElementById('fBrand').value;
+      const priceStr = document.getElementById('fPrice').value;
+      const maxPrice = priceStr ? parseFloat(priceStr) : null;
+      const storage = document.getElementById('fStorage').value;
       filteredPhones = phones.filter(p => {
-        if (lunar && p.lunarPhase !== lunar) return false;
-        if (zodiac && p.ceoZodiac !== zodiac) return false;
-        if (floats === 'yes' && !p.floats) return false;
-        if (floats === 'no' && p.floats) return false;
+        if (brand && p.brand !== brand) return false;
+        if (maxPrice !== null && !isNaN(maxPrice) && p.priceHidden > maxPrice) return false;
+        if (storage && !p.specs.includes(storage)) return false;
         return true;
       });
       renderProducts();
