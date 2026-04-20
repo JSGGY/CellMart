@@ -31,7 +31,9 @@
             <div class="stars">${stars} <span style="font-size:12px;color:var(--muted-foreground);margin-left:4px">(247 reseñas)</span></div>
             <p style="color:var(--muted-foreground);font-size:14px;margin:12px 0">${phone.specs}</p>
 
-            <div id="captchaArea"></div>
+          <!-- Mejora de eficiencia: se eliminó el captcha para permitir al usuario
+            acceder al precio de forma inmediata, reduciendo pasos innecesarios -->
+            <p class="price-revealed">$${phone.priceHidden.toLocaleString()} <span>USD</span></p>
 
             <div class="features-row" style="margin:20px 0">
               <div>🚚<br>Envío gratis</div>
@@ -68,29 +70,8 @@
         </div>
       </div>`;
 
-      // Captcha
-      const a = Math.floor(Math.random()*50)+30, b = Math.floor(Math.random()*17)+7, c = Math.floor(Math.random()*9)+2;
-      const result = (a*b) + (c*2) - (a%7);
-      const captcha = document.getElementById('captchaArea');
-      captcha.innerHTML = `<div class="captcha-box">
-        <div class="lock">🔒 Verificación requerida para ver el precio</div>
-        <p class="question">(${a} × ${b}) + √${c*c*4} − ${a%7} = ?</p>
-        <div><input id="captchaInput" placeholder="Resultado"><button class="verify-btn" onclick="checkCaptcha(${result})">Verificar</button></div>
-        <p class="captcha-error" id="captchaErr"></p>
-      </div>`;
-
       // Evasive
       createEvasiveButton(document.getElementById('evasiveArea'), () => showToast('Añadido al carrito', phone.name + ' fue agregado correctamente.'));
-    }
-
-    function checkCaptcha(expected) {
-      const val = parseInt(document.getElementById('captchaInput').value);
-      if (val === expected) {
-        document.getElementById('captchaArea').innerHTML = `<p class="price-revealed">$${phone.priceHidden.toLocaleString()} <span>USD</span></p>`;
-      } else {
-        document.getElementById('captchaErr').textContent = 'Resultado incorrecto. Intente de nuevo.';
-        document.getElementById('captchaInput').value = '';
-      }
     }
 
     render();

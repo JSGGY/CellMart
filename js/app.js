@@ -1,6 +1,6 @@
 /* ---- Shared components ---- */
 function renderBanner() {
-  return '<div class="banner">⚠️ Aviso de seguridad: Su información bancaria está siendo almacenada en un servidor público sin cifrado. Agradecemos su confianza.</div>';
+  return '<div class="banner" style="background:var(--primary); animation:none">🔒 Conexión segura: Tus datos están protegidos con cifrado de extremo a extremo.</div>';
 }
 
 function renderHiddenNav() {
@@ -18,14 +18,17 @@ function renderModal() {
   return `
     <div class="modal-overlay" id="errorModal">
       <div class="modal">
-        <h3>Error en el procesamiento</h3>
-        <p>Ha ocurrido un error inesperado. Revise los campos e intente nuevamente.</p>
-        <p class="code">Código: ERR_UNKNOWN_FIELD_VALIDATION_FAILURE</p>
-        <button onclick="closeModal()">Aceptar</button>
+        <h3 id="modalTitle" style="color:var(--foreground)">Información incompleta</h3>
+        <p id="modalDesc">Por favor, revisa que todos los campos requeridos estén llenos adecuadamente.</p>
+        <button onclick="closeModal()">Entendido</button>
       </div>
     </div>`;
 }
-function openModal() { document.getElementById('errorModal').classList.add('open'); }
+function openModal(title = "Información incompleta", desc = "Por favor, revisa que todos los campos requeridos estén llenos y vuelve a intentarlo.") { 
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalDesc').textContent = desc;
+  document.getElementById('errorModal').classList.add('open'); 
+}
 function closeModal() { document.getElementById('errorModal').classList.remove('open'); }
 
 function renderFooter() {
@@ -59,6 +62,15 @@ function createEvasiveButton(container, onAdd, label) {
     onAdd();
   });
   container.appendChild(btn);
+}
+
+/* Toast */
+function showToast(title, desc) {
+  const t = document.createElement('div');
+  t.style.cssText = 'position:fixed;bottom:24px;right:24px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 20px;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:200;font-size:14px;max-width:320px;';
+  t.innerHTML = `<strong>${title}</strong><br><span style="font-size:12px;color:var(--muted-foreground)">${desc}</span>`;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
 }
 
 /* Toast */

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
   <meta name="description" content="Tienda online de smartphones con los mejores precios y ofertas.">
   <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
   <div id="app"></div>
   <script src="js/data.js"></script>
@@ -17,7 +19,7 @@
     function render() {
       const app = document.getElementById('app');
       app.innerHTML = renderBanner() + renderHiddenNav() +
-      `<div class="topbar">
+        `<div class="topbar">
         <div class="topbar-inner">
           <h1 class="playfair" style="font-size:24px;font-weight:700">CellMart</h1>
           <div class="topbar-info">
@@ -32,10 +34,9 @@
           <p class="sub">Los mejores smartphones</p>
           <h2 class="playfair">Encuentra tu próximo dispositivo</h2>
           <div class="search-box">
-            <input id="searchInput" placeholder="Buscar por marca o modelo">
-            <button onclick="doSearch()">Buscar</button>
+            <input id="searchInput" placeholder="Buscar por marca o modelo...">
+            <button onclick="applyFilters()">Buscar</button>
           </div>
-          <p class="search-error" id="searchError"></p>
         </div>
       </div>
       <div class="marquee-bar"><span class="marquee-text">🔥 Oferta limitada: Hasta 40% de descuento · Envío express en 24h · Financiamiento sin intereses · Garantía extendida incluida</span></div>
@@ -44,12 +45,16 @@
           <div>
             <div class="filters">
               <h3>Filtros</h3>
-              <label>Marca</label>
-              <select id="fBrand"><option value="">Todas las marcas</option>${Array.from(new Set(phones.map(p=>p.brand))).map(b=>`<option>${b}</option>`).join('')}</select>
-              <label>Precio máximo ($)</label>
-              <input type="number" id="fPrice" placeholder="Cualquier precio" style="margin-bottom: 12px;">
-              <label>Almacenamiento Mínimo</label>
-              <select id="fStorage"><option value="">Todos</option><option value="256GB">256GB</option><option value="512GB">512GB</option></select>
+<label>Marca</label>
+<select id="fBrand">
+  <option value="">Todas las marcas</option>
+  <option>Apple</option>
+  <option>Samsung</option>
+  <option>Google</option>
+  <option>OnePlus</option>
+  <option>Sony</option>
+  <option>Huawei</option>
+</select>
               <button onclick="applyFilters()">Aplicar filtros</button>
             </div>
           </div>
@@ -66,8 +71,8 @@
     function renderProducts() {
       const grid = document.getElementById('productGrid');
       const noRes = document.getElementById('noResults');
-      if (filteredPhones.length === 0) { grid.style.display='none'; noRes.style.display='block'; return; }
-      grid.style.display=''; noRes.style.display='none';
+      if (filteredPhones.length === 0) { grid.style.display = 'none'; noRes.style.display = 'block'; return; }
+      grid.style.display = ''; noRes.style.display = 'none';
       grid.innerHTML = filteredPhones.map(p => `
         <div class="product-card" onclick="location.href='product.html?id=${p.id}'">
           <img src="${p.image}" alt="${p.name}">
@@ -116,4 +121,5 @@
     render();
   </script>
 </body>
+
 </html>
