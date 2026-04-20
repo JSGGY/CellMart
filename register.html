@@ -16,24 +16,18 @@
       <div class="register-form">
         <h1 class="playfair">Crear cuenta</h1>
         <p class="subtitle">Ingresa tus datos para registrarte</p>
-        <form onsubmit="event.preventDefault(); openModal();">
+        <form onsubmit="event.preventDefault(); openModal('Verifica tus datos', 'Revisa que tu correo sea válido y tu contraseña cumpla con los requisitos de seguridad.');">
           <div class="field">
             <label>Correo electrónico</label>
-            <input type="email" placeholder="nombre@ejemplo.com">
+            <input type="email" placeholder="nombre@ejemplo.com" required>
           </div>
           <div class="field">
             <label>Contraseña</label>
-            <input type="text" class="password-input" id="pwInput" placeholder="Ingresa tu contraseña" oninput="document.getElementById('pwWarn').style.display=this.value?'block':'none'">
-            <p class="pw-warning" id="pwWarn" style="display:none">Tu contraseña es visible en pantalla para mayor comodidad.</p>
+            <input type="password" id="pwInput" placeholder="Ingresa tu contraseña (mín. 8 caracteres)" required minlength="8">
           </div>
           <div class="field">
             <label>Nombre de tu primera mascota</label>
-            <input placeholder="Pregunta de seguridad">
-          </div>
-          <div class="field">
-            <label>Número de tarjeta de crédito</label>
-            <input placeholder="Para verificación de identidad">
-            <p class="hint">Requerido para validar tu edad. No se realizará ningún cobro.</p>
+            <input placeholder="Pregunta de seguridad" required>
           </div>
           <button type="submit">Crear cuenta</button>
           <p class="legal">Al registrarte aceptas nuestros términos de servicio y política de privacidad.</p>
