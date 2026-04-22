@@ -18,6 +18,7 @@
       document.getElementById('app').innerHTML = renderBanner() + renderHiddenNav() + renderModal() +
       `<div class="topbar"><div class="topbar-inner"><h1 class="playfair" style="font-size:24px;font-weight:700">CellMart</h1></div></div>
       <div class="container" style="max-width:768px">
+        <a href="index.html" class="back-link">← Volver a la tienda</a>
         <h2 style="font-size:20px;font-weight:700;margin-bottom:4px">Proceso de compra</h2>
         <p style="font-size:14px;color:var(--muted-foreground);margin-bottom:24px">Paso ${currentStep+1} de 12 — ${steps[currentStep]}</p>
         <div class="progress-bar">${steps.map((_,i)=>`<div class="${i<=currentStep?'active':''}"></div>`).join('')}</div>
